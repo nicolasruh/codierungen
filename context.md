@@ -51,7 +51,7 @@ Eingabefeld mit Label **Daten**:
 - Bei mehreren Blöcken bleiben Anordnung und Fortschritt wie bisher: beispielsweise **1 / 2 Blöcke decodiert**, zusätzlich zu eventuell vorhandenen UTF-8-Fehlern. Lange Kopfzeilen dürfen auf schmalen Bildschirmen umbrechen.
 - Der Rücksetz-Hinweis nach geänderten Daten/Parametern verschwindet bei der ersten Klick-, Tastatur- oder Eingabeinteraktion im Informationsbereich oder Aufgabendialog.
 - Nach dem letzten decodierbaren Block ersetzt ein Abschluss mit **Schließen** die Weiter-Control im Overlay. Ungültige UTF-8-Folgen werden dabei ausdrücklich genannt, nicht als erfolgreich decodiert dargestellt.
-- Blöcke enthalten nur Bits, Ergebnis und Controls. Tabellenindizes, Kanalwerte und Erklärungen stehen ausschließlich im Overlay.
+- Blöcke enthalten nur Bits, Ergebnis und Controls; gelöste Werte erscheinen fett. Tabellenindizes, Kanalwerte und Erklärungen stehen ausschließlich im Overlay. Erweiterte Codierungen stehen am Ende der Hauptauswahl.
 - Dreikanal-Farben erhalten Abstände zwischen den Kanalgruppen; Graustufen nicht.
 
 ## Einfache Codierungen
@@ -63,7 +63,7 @@ Eingabefeld mit Label **Daten**:
 - Wählbare Blockgrößen: 1 bis 8 sowie 16, 32 und 64 Bit.
 - Ausgabe ohne Genauigkeitsverlust.
 - Details: Bits, binäre Stellenwerte und Summe der aktiven Stellenwerte.
-- Stellenwerte erscheinen als Potenzformel und Wert, beispielsweise 2⁷ = 128₁₀. Auch Exponenten folgen dem Basisschalter, damit die Formel direkt in den Rechner passt: 2ᴬ = 400₁₆ entspricht 2¹⁰ = 1024₁₀.
+- Stellenwerte erscheinen je Tabellenzelle zweizeilig: oben die Potenzformel, darunter der Wert mit Basis als Subscript, beispielsweise 2⁷ und 128₁₀. Auch Exponenten folgen dem Basisschalter, damit die Formel direkt in den Rechner passt: 2ᴬ = 400₁₆ entspricht 2¹⁰ = 1024₁₀.
 
 ### Ganzzahlen mit Vorzeichen (Erweiterung)
 
@@ -131,7 +131,7 @@ Bei UTF-8 gilt diese Regel nur für vollständige Bytes (8 Bit), nicht für mehr
 
 - Padding nur für die Interpretation, nie als Änderung des Eingabefelds.
 - Ergänzte Nullen sind visuell von Originalbits unterscheidbar und kurz erklärt.
-- Der knappe Hinweis „Padding: … Nullen links ergänzt.“ erscheint nur bei tatsächlichem Padding.
+- Der Hinweis „Padding: … Nullen links ergänzt. (Unvollständige Blöcke werden mit Nullen aufgefüllt.)“ erscheint nur bei tatsächlichem Padding. Hinweis und Padding-Bits sind im interaktiven Modus blass hellblau mit dunkler blauer Schrift, im automatischen Modus bernsteinfarben; damit bleiben sie jeweils vom Modusakzent unterscheidbar.
 - Padding-Nullen zählen bei der Decodierung wie reguläre Nullen.
 - Die 64-Bit-Grenze gilt ausschließlich für Originaldaten. Beispielsweise ergeben 64 Eingabebits bei 24 Bit pro Block nach Padding 72 Interpretationsbits.
 - Jeder Block bleibt seinem Ergebnis eindeutig zugeordnet.
@@ -253,8 +253,10 @@ Beispiel: `110|00011 10|100100` → Nutzbits `00011100100` → 228 (dezimal), E4
 
 - Automatisch: fertige Zeichen direkt bei ihren variablen Blöcken.
 - Erklärung: Bytepräfixe → Nutzbits → Codepoint → Zeichen, ohne lange Zusatztexte.
-- Manuell: die Nutzbits als Codepoint in Dezimal/Hex eingeben; nach erfolgreicher Prüfung das Zeichen und dessen `U+…`-Identifier zeigen.
-- Unicode-Ansicht als aufklappbares, lokal erzeugtes Raster mit 128 Positionen, Vor/Zurück und Eingabe eines Start-Codepoints in der gewählten Basis. Die Eingabe wird auf eine 128er-Seite ausgerichtet; gültiger Bereich: U+0000 bis U+10FFFF.
+- Manuell: die Nutzbits als Codepoint in Dezimal/Hex eingeben oder einen Rastereintrag anklicken. Ein Klick trägt nur den Wert in das Antwortfeld ein und markiert ihn; erst **Prüfen** bestätigt die Antwort. Eine offene Rechnung wird dabei ohne Übernahme geschlossen. Nach erfolgreicher Prüfung das Zeichen und dessen `U+…`-Identifier zeigen.
+- Unicode-Ansicht als aufklappbares, lokal erzeugtes Raster mit 128 Positionen, Vor/Zurück und Eingabe eines Start-Codepoints in der gewählten Basis. Enter übernimmt den Startwert ohne zusätzlichen Anzeigen-Button; die Eingabe wird auf die zugehörige 128er-Seite ausgerichtet. Gültiger Bereich: U+0000 bis U+10FFFF.
+- Der knappe Bereichshinweis erklärt die folgenden 128 Zeichen. Das Raster passt seine Spaltenzahl an die verfügbare Breite an und besitzt keine eigene horizontale oder vertikale Scrollfläche; nur das gesamte Overlay scrollt.
+- Das Codepoint-Antwortfeld steht unter dem Raster. Beim Öffnen des Bereichs und bei einer Auswahl scrollt das Overlay zu Eingabe und Prüfknopf. Der Prüfbereich bleibt während des Durchsehens am unteren Overlay-Rand sichtbar.
 - Im Aufgabenmodus startet das Raster bei U+0000 und verrät weder das Zielzeichen noch dessen Position. Nach dem Lösen wird die Zielseite mit markiertem Codepoint angeboten.
 - Surrogatpositionen erscheinen als reserviert statt als Zeichen. Steuer-/Formatzeichen werden lesbar benannt; kombinierende Zeichen erhalten einen gepunkteten Kreis.
 - Namen, Sprachzugehörigkeit und andere Unicode-Metadaten sind nicht in `String.fromCodePoint` enthalten. Dafür wäre optional ein lokaler Datenausschnitt nötig; für die erste Umsetzung genügt Zeichen plus Codepoint.
@@ -319,7 +321,7 @@ Die HTML-Datei lässt sich direkt ohne lokalen Webserver öffnen (`file://`). Da
 
 ## Implementierter Stand
 
-Die ersten dreizehn Iterationen sind umgesetzt: automatischer und standardmäßig interaktiver Modus, direkte Blockdetails, blockweiser Lernmodus, die vereinbarten Parameter, UTF-8, gut unterscheidbare Modusfarbschemata sowie Stellenwertformeln und ein wiederverwendbarer Inline-Rechner für Zahlen, Farbkanäle und Zeichencodes. Die aktuelle Oberfläche ergänzt klarere Kanalregler, Blockzustände und einen ausdrücklichen Aufgabenabschluss sowie CMY und Ganzzahlen mit Vorzeichen. Einzelblöcke nutzen die volle Informationsbreite ohne Fortschrittszähler; offene Aufgaben erhalten einen roten Textstatus. UTF-Oberflächenüberarbeitung, Fest-/Fließkommazahlen, eine gemeinsame Erweiterungsgruppierung, Übungsseite und Zeit-Challenges sind geplante spätere Schritte. UTF-16 ist optional; die Symboltabelle bleibt zurückgestellt.
+Die ersten vierzehn Iterationen sind umgesetzt: automatischer und standardmäßig interaktiver Modus, direkte Blockdetails, blockweiser Lernmodus, die vereinbarten Parameter, UTF-8, gut unterscheidbare Modusfarbschemata sowie Stellenwertformeln und ein wiederverwendbarer Inline-Rechner für Zahlen, Farbkanäle und Zeichencodes. Die aktuelle Oberfläche ergänzt klarere Kanalregler, Blockzustände und einen ausdrücklichen Aufgabenabschluss sowie CMY und Ganzzahlen mit Vorzeichen. Einzelblöcke nutzen die volle Informationsbreite ohne Fortschrittszähler; offene Aufgaben erhalten einen roten Textstatus. Ergänzt sind zweizeilige Stellenwerte, hervorgehobene Ergebnisse und eine direkt auswählbare, responsive Unicode-Ansicht ohne internes Scrolling. Weitere UTF-Oberflächenüberarbeitung, Fest-/Fließkommazahlen, eine gemeinsame Erweiterungsgruppierung, Übungsseite und Zeit-Challenges sind geplante spätere Schritte. UTF-16 ist optional; die Symboltabelle bleibt zurückgestellt.
 
 ### Start und Bedienung
 
@@ -379,6 +381,7 @@ Node ist ausschließlich für Entwicklungstests erforderlich, nicht zum Benutzen
 Geprüfter Stand:
 
 - 39 erfolgreiche Testgruppen, einschließlich sämtlicher Kombinationen aus Eingabelängen 0–64 und Blockgrößen 1–64.
+- Browser: Erweiterungen am Ende der Auswahl, Padding-Farben je Modus, fette Ergebnisse und zweizeilige Dez/Hex-Stellenwerte einschließlich negativem höchsten Stellenwert. Unicode-Auswahl ohne automatische Prüfung, Enter/Seitengrenzen, Basiswechsel, Rechnerabbruch, Surrogat-Platzhalter und sichtbare Eingabe/Prüfung ohne internes Raster-Scrolling sind bei Desktopbreite und 360 Pixeln geprüft.
 - Browser: Einzelblöcke füllen die Informationsbreite ohne Fortschrittszähler; Mehrfachblöcke behalten Layout und Fortschritt. Roter offener Status ohne Rahmen, Hintergrund oder Padding, Wechsel über Daten/Blockgröße, UTF-8-Codepoints und Fehler sowie beide Modi bei 360 Pixeln geprüft.
 - Vorzeichenbehaftete Ganzzahlen: Grenzwerte aller erlaubten Blockgrößen, sämtliche Bitmuster bis acht Bit, Null-Padding, negative Dez/Hex-Antworten und werttreue Entwürfe beim Basiswechsel.
 - CMY: alle Dreikanal-Farbtiefen, Primär-/Mischfarben, Weiß/Schwarz, unveränderte Graustufen und manuelle Kanalprüfung.

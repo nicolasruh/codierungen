@@ -132,7 +132,7 @@
       return;
     }
     $("padding-note").hidden = !state.result.padding;
-    $("padding-note").textContent = `Padding: ${state.result.padding} Null${state.result.padding === 1 ? "" : "en"} links ergänzt.`;
+    $("padding-note").textContent = `Padding: ${state.result.padding} Null${state.result.padding === 1 ? "" : "en"} links ergänzt. (Unvollständige Blöcke werden mit Nullen aufgefüllt.)`;
     $("blocks").innerHTML = state.result.blocks.map((block, index) => {
       const visible = solved(index);
       const failed = block.decoded.type === "error";
@@ -171,7 +171,7 @@
     const terms = weights.filter((_, index) => block.bits[index] === "1");
     return `<p class="muted">${block.decoded.signed ? "Zweierkomplement: Höchster Stellenwert negativ, übrige Stellenwerte positiv." : "Stellenwerte der Einsen addieren."}</p>
       <div class="weights-scroll"><table class="weights"><tbody>
-        <tr><th scope="row">Stellenwert</th>${weights.map((weight, index) => `<td${weight < 0n ? ' class="negative-weight"' : ""}>${weight < 0n ? "-" : ""}2<sup>${D.digits(block.bits.length - index - 1, state.base)}</sup> = ${number(weight)}</td>`).join("")}</tr>
+        <tr><th scope="row">Stellenwert</th>${weights.map((weight, index) => `<td${weight < 0n ? ' class="negative-weight"' : ""}><span class="weight-formula">${weight < 0n ? "-" : ""}2<sup>${D.digits(block.bits.length - index - 1, state.base)}</sup></span><span class="weight-value">${number(weight)}</span></td>`).join("")}</tr>
         <tr><th scope="row">Bit</th>${Array.from(block.bits, bit => `<td class="${bit === "1" ? "on" : ""}">${bit}</td>`).join("")}</tr>
       </tbody></table></div>
       ${reveal ? `<p class="calculation">${terms.length ? terms.map(number).join(" + ") : number(0)} = <strong>${number(block.decoded.value)}</strong></p>` : ""}`;
@@ -233,28 +233,32 @@
   function unicodeBrowser(decoded, manual) {
     const start = state.dialog.unicodeStart;
     const identifier = codePoint => "U+" + D.digits(codePoint, 16).padStart(4, "0");
+    const selected = manual ? D.parseAnswer(state.lesson.current.answer, state.base) : BigInt(decoded.codePoint);
     return `<details id="unicode-browser" ${state.dialog.unicodeOpen ? "open" : ""}>
       <summary>Unicode-Bereich ansehen</summary>
+      <p class="muted small">Bereich: Zeigt ab dem Start-Codepoint die folgenden 128 Zeichen der Unicode-Liste.</p>
       <div class="unicode-controls">
         <label>Start-Codepoint <sub>${state.base}</sub>
           <input id="unicode-start" type="text" value="${D.digits(start, state.base)}" aria-label="Start-Codepoint, Basis ${state.base}" spellcheck="false">
         </label>
-        <button id="show-unicode" type="button">Anzeigen</button>
         <button type="button" data-unicode-page="-1" aria-label="Vorheriger Unicode-Bereich" ${start === 0 ? "disabled" : ""}>←</button>
         <button type="button" data-unicode-page="1" aria-label="Nächster Unicode-Bereich" ${start === 0x10FF80 ? "disabled" : ""}>→</button>
       </div>
       <p id="unicode-error" class="feedback error" role="alert" hidden></p>
-      <div class="table-scroll"><table class="charset-table">
-        <caption>${identifier(start)}–${identifier(start + 127)} · U+… ist hexadezimal</caption>
-        <tbody>${Array.from({ length: 8 }, (_, row) => `<tr>${Array.from({ length: 16 }, (_, column) => {
-          const codePoint = start + row * 16 + column;
+      <p class="muted small">${identifier(start)}–${identifier(start + 127)} · U+… ist hexadezimal</p>
+      <div class="unicode-grid" role="list" aria-label="Unicode-Bereich ${identifier(start)}–${identifier(start + 127)}">
+        ${Array.from({ length: 128 }, (_, offset) => {
+          const codePoint = start + offset;
           const surrogate = codePoint >= 0xD800 && codePoint <= 0xDFFF;
           const label = surrogate ? "Surrogat" : D.unicodeEntry(codePoint).label;
-          return `<td><div class="table-entry${!manual && decoded.codePoint === codePoint ? " selected" : ""}${surrogate ? " unassigned" : ""}" title="${identifier(codePoint)}">
-            <span class="index">${number(codePoint)}</span><bdi>${escape(label)}</bdi>
-          </div></td>`;
-        }).join("")}</tr>`).join("")}</tbody>
-      </table></div>
+          const active = selected === BigInt(codePoint);
+          const classes = `table-entry${active ? " selected" : ""}${surrogate ? " unassigned" : ""}`;
+          const content = `<span class="index">${number(codePoint)}</span><bdi>${escape(label)}</bdi>`;
+          return `<div role="listitem">${manual && !surrogate
+            ? `<button type="button" class="${classes}" data-codepoint="${codePoint}" aria-pressed="${active}" aria-label="Codepoint ${D.digits(codePoint, state.base)}, Basis ${state.base}: ${escape(label)} (${identifier(codePoint)})">${content}</button>`
+            : `<div class="${classes}" title="${identifier(codePoint)}">${content}</div>`}</div>`;
+        }).join("")}
+      </div>
     </details>`;
   }
 
@@ -266,8 +270,9 @@
           .map((pattern, index) => `<span>${index + 1} Byte${index ? "s" : ""}</span><code>${pattern}</code>`).join("")}
       </div>
       <p class="payload">Nutzbits: <code>${block.utf8.payload}</code></p>
-      ${manual ? numberAnswer("Unicode-Codepoint") : `<p class="codepoint-result">${number(decoded.codePoint)} → <code>${decoded.identifier}</code> → <strong><bdi>${escape(decoded.label)}</bdi></strong></p>`}
+      ${manual ? "" : `<p class="codepoint-result">${number(decoded.codePoint)} → <code>${decoded.identifier}</code> → <strong><bdi>${escape(decoded.label)}</bdi></strong></p>`}
       ${unicodeBrowser(decoded, manual)}
+      ${manual ? numberAnswer("Unicode-Codepoint") : ""}
       <p class="muted small">Ein Block = ein Codepoint. Kombinierte Zeichen können mehrere Blöcke belegen. Darstellung mit lokalen Schriften.</p>`;
   }
 
@@ -291,6 +296,10 @@
       return;
     }
     showUnicodePage(Math.floor(Number(value) / 128) * 128);
+  }
+
+  function scrollToUnicodeAnswer() {
+    $("details").scrollTop = $("details").scrollHeight;
   }
 
   function colorHints(decoded) {
@@ -514,7 +523,15 @@
     changeBase(Number(event.target.value));
   });
   $("details-content").addEventListener("input", event => {
-    if (event.target.id === "number-answer") state.lesson.current.answer = event.target.value;
+    if (event.target.id === "number-answer") {
+      state.lesson.current.answer = event.target.value;
+      const selected = D.parseAnswer(event.target.value, state.base);
+      $("details-content").querySelectorAll("[data-codepoint]").forEach(choice => {
+        const active = selected === BigInt(choice.dataset.codepoint);
+        choice.setAttribute("aria-pressed", String(active));
+        choice.classList.toggle("selected", active);
+      });
+    }
     else if (event.target.dataset.channel !== undefined) {
       const index = Number(event.target.dataset.channel);
       const raw = Number(event.target.value);
@@ -532,6 +549,12 @@
       $("color-hints").innerHTML = colorHints(color);
     }
   });
+  $("details-content").addEventListener("toggle", event => {
+    if (event.target !== $("unicode-browser") || !state.dialog) return;
+    const opening = event.target.open && !state.dialog.unicodeOpen;
+    state.dialog.unicodeOpen = event.target.open;
+    if (opening && state.dialog.kind === "manual") scrollToUnicodeAnswer();
+  }, true);
   $("details-content").addEventListener("click", event => {
     const button = event.target.closest("button");
     if (!button || button.disabled) return;
@@ -539,15 +562,23 @@
       openCalculator(button.dataset.calculator, button.dataset.calculatorChannel === undefined ? null : Number(button.dataset.calculatorChannel));
       return;
     }
-    if (button.id === "show-unicode") {
-      readUnicodePage();
-      return;
-    }
     if (button.dataset.unicodePage !== undefined) {
       showUnicodePage(state.dialog.unicodeStart + Number(button.dataset.unicodePage) * 128);
       return;
     }
     if (state.dialog.kind !== "manual") return;
+    if (button.dataset.codepoint !== undefined) {
+      const value = Number(button.dataset.codepoint);
+      rememberUnicodeBrowser();
+      calculator.close();
+      state.lesson.current.answer = D.digits(value, state.base);
+      state.lesson.current.feedback = "";
+      state.lesson.current.feedbackKind = "";
+      renderDialog();
+      $("number-answer").focus({ preventScroll: true });
+      scrollToUnicodeAnswer();
+      return;
+    }
     if (button.dataset.character !== undefined) {
       const index = Number(button.dataset.character);
       calculator.close();

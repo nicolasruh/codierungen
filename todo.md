@@ -199,6 +199,18 @@ Geprüft: alle vier Aufgabenarten, blockweise Automatisierung, zwölf Beispiele,
 - [x] Mehrfachblock-Layout und Fortschrittsanzeige unverändert erhalten, auch beim Wechsel der Daten oder Blockgröße.
 - [x] 39 Logiktests sowie Browserprüfungen für offene/gelöste Blöcke, UTF-8, Fehler und beide Modi bei 360 Pixeln durchführen.
 
+## Iteration 14: Kompakte Erklärungen und direkte Unicode-Auswahl
+
+- [x] Ganzzahlen mit Vorzeichen an das Ende der Hauptauswahl verschieben.
+- [x] Padding-Hinweis um die Auffüllregel ergänzen und im interaktiven Modus samt Padding-Bits blass hellblau statt akzentähnlich darstellen.
+- [x] Decodierte Ergebnisse fett anzeigen.
+- [x] Stellenwertzellen zweizeilig darstellen: Potenzformel oben, Wert mit Basis unten; Vorzeichen und Dez/Hex erhalten.
+- [x] Unicode-Raster im manuellen Modus anklickbar machen: Wert eintragen und markieren, aber erst über Prüfen bestätigen.
+- [x] Responsives Raster ohne eigene Scrollfläche verwenden; Eingabe darunter und Prüfen am unteren Overlay-Rand sichtbar halten.
+- [x] Beim Öffnen des Bereichs und bei einer Auswahl ausschließlich das ganze Overlay zu Eingabe/Prüfung scrollen.
+- [x] Anzeigen-Button entfernen; Enter, Ausrichtung auf 128er-Seiten und knappe Bereichserklärung beibehalten.
+- [x] 39 Logiktests sowie Browserprüfungen für Auswahl, Rechnerabbruch, Basiswechsel, Seiten-/Surrogatgrenzen, ASCII und mobile Geometrie durchführen.
+
 ## Zurückgestellt
 
 - [ ] ? Symboltabelle / „Pseudo-Wingdings“: Bedarf später klären; gegebenenfalls feste Unicode-Belegung statt vorausgesetzter Wingdings-Schrift.
@@ -215,6 +227,7 @@ Geprüft: alle vier Aufgabenarten, blockweise Automatisierung, zwölf Beispiele,
 ## Geplant: UTF-Oberfläche überarbeiten
 
 - [ ] Oberfläche der UTF-Decodierung überarbeiten: Zusammenhang zwischen Präfixen, Nutzbits, Codepoint und Zeichen übersichtlicher und interaktiv nachvollziehbar darstellen.
+  - [x] Erster Bedienungsschritt: direkte Unicode-Auswahl, responsives Raster und Overlay-Scrolling (Iteration 14).
 - [ ] Automatische Erklärung und manuelle Aufgabe aufeinander abstimmen; gezielte Hilfen statt zusätzlicher Textfülle.
 - [ ] ? UTF-16 ergänzen: Bedarf und Umfang klären, gegebenenfalls Codeeinheiten, Surrogatpaare und Byte-Reihenfolge spezifizieren.
 
