@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="de" data-mode="interactive">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Bit für Bit · Codierungen entdecken</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="calculator.css">
+  <script src="decoder.js" defer></script>
+  <script src="learning.js" defer></script>
+  <script src="calculator.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <h1>Bit für Bit<span class="accent">.</span></h1>
+        <p class="subtitle">Von Daten zu Informationen</p>
+      </div>
+      <fieldset id="mode" class="mode-control">
+        <legend>Modus</legend>
+        <div class="segmented">
+          <label><input type="radio" name="mode" value="auto"><span>Automatisch</span></label>
+          <label><input type="radio" name="mode" value="interactive" checked><span>Interaktiv</span></label>
+        </div>
+      </fieldset>
+    </header>
+
+    <fieldset class="settings">
+      <legend>Codierungseinstellungen</legend>
+      <label>Was wird Codiert?
+        <select id="encoding">
+          <option value="integer">Positive Ganzzahlen</option>
+          <option value="signed">Ganzzahlen mit Vorzeichen (Erweiterung)</option>
+          <option value="character">Zeichen</option>
+          <option value="color">Farben</option>
+          <option value="boolean">Wahrheitswerte</option>
+        </select>
+      </label>
+      <label id="integer-setting">Bit pro Zahl
+        <select id="integer-size">
+          <option>1</option><option>2</option><option>3</option><option>4</option>
+          <option>5</option><option>6</option><option>7</option><option selected>8</option>
+          <option>16</option><option>32</option><option>64</option>
+        </select>
+      </label>
+      <label id="character-setting" hidden>Zeichencodierung
+        <select id="charset">
+          <option value="ascii">ASCII · zweite Hälfte unbelegt</option>
+          <option value="de">Deutsch · Windows-1252-Erweiterung</option>
+          <option value="pl">Polnisch · Windows-1250-Erweiterung</option>
+          <option value="cyrillic">Kyrillisch · Windows-1251-Erweiterung</option>
+          <option value="utf8">UTF-8 · Unicode, 1–4 Bytes (Erweiterung)</option>
+        </select>
+      </label>
+      <label id="depth-setting" hidden>Bit pro Farbe: <output id="depth-label">24</output>
+        <input id="color-depth" type="range" min="1" max="24" value="24">
+      </label>
+      <label id="space-setting" hidden>Farbraum
+        <select id="color-space">
+          <option value="rgb">RGB</option><option value="cmy">CMY</option><option value="hsb">HSB</option>
+          <option value="lab">CIELAB · D65</option>
+        </select>
+      </label>
+      <label id="boolean-setting" hidden>Zuordnung
+        <select id="boolean-map">
+          <option value="normal">0 = Falsch · 1 = Wahr</option>
+          <option value="reverse">0 = Wahr · 1 = Falsch</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <section class="panel data-panel" aria-labelledby="data-heading">
+      <div class="section-heading">
+        <h2 id="data-heading"><span class="section-number">01</span> Daten</h2>
+        <span id="bit-count" class="badge">0 / 64 Bit</span>
+      </div>
+      <label for="data" class="sr-only">Daten (Bitfolge)</label>
+      <textarea id="data" rows="2" spellcheck="false" autocapitalize="off"
+        autocomplete="off" aria-describedby="data-help data-error"
+        placeholder="z. B. 01001011"></textarea>
+      <div class="data-footer">
+        <p id="data-help" class="muted">Nur 0 und 1 · maximal 64 Bit · keine Leerzeichen</p>
+        <label class="example-control">Beispiel laden
+          <select id="example"><option value="">Bitfolge wählen …</option></select>
+        </label>
+      </div>
+      <p id="data-error" class="feedback error" role="alert" hidden></p>
+    </section>
+
+    <section id="information" class="panel" aria-labelledby="info-heading">
+      <div class="section-heading">
+        <h2 id="info-heading"><span class="section-number">02</span> Informationen</h2>
+        <span id="progress" class="badge" role="status" hidden></span>
+      </div>
+      <p id="restart-note" class="feedback" role="status" hidden></p>
+      <p id="decoding-error" class="feedback error" role="alert" hidden></p>
+      <div id="empty-state" class="empty-state">
+        <span class="empty-bits" aria-hidden="true">0 1 0 1</span>
+        <p>Bits eingeben oder ein Beispiel wählen.</p>
+      </div>
+      <div id="visualization" hidden>
+        <p id="padding-note" class="padding-note" hidden></p>
+        <div id="blocks" class="blocks" aria-labelledby="info-heading"></div>
+      </div>
+    </section>
+    <footer>Alles bleibt in deinem Browser. Keine Übertragung, keine Speicherung.</footer>
+  </main>
+  <dialog id="details" aria-labelledby="details-title">
+    <div class="dialog-header">
+      <h2 id="details-title">Block im Detail</h2>
+      <button id="close-details" type="button" aria-label="Detailansicht schließen">✕</button>
+    </div>
+    <fieldset class="base-control">
+      <legend>Basis für Werte in der Erklärung</legend>
+      <div class="segmented">
+        <label><input type="radio" name="base" value="10" checked><span>Dez</span></label>
+        <label><input type="radio" name="base" value="16"><span>Hex</span></label>
+      </div>
+    </fieldset>
+    <div id="details-content"></div>
+    <p id="answer-feedback" class="feedback" role="status" hidden></p>
+    <div id="manual-actions" class="dialog-actions" hidden>
+      <button id="check-answer" type="button" class="primary">Prüfen</button>
+    </div>
+    <div id="next-actions" class="dialog-actions" hidden>
+      <button id="next-open" type="button" class="primary">Nächster offener Block →</button>
+    </div>
+    <div id="finish-actions" class="completion-actions" hidden>
+      <p id="completion-note" role="status"></p>
+      <button id="finish-close" type="button" class="primary">Schließen</button>
+    </div>
+  </dialog>
+</body>
+</html>
