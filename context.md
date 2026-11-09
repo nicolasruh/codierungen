@@ -46,8 +46,9 @@ Eingabefeld mit Label **Daten**:
 - Keine Blockauswahl und keine Pfeilnavigation erforderlich.
 - Bei jedem decodierten Block öffnet **?** direkt das Detail-Overlay.
 - Bei jedem ungelösten Block stehen **Manuell** und **Automatisch**.
-- Offene Blöcke sind gestrichelt umrandet und hinterlegt; decodierte Blöcke haben einen kräftigen, durchgezogenen linken Akzent. Offene und fehlerhafte Blöcke erhalten keine **Weiter**-Control.
-- Fortschritt erscheint als beispielsweise **1 / 2 Blöcke decodiert**, zusätzlich zu eventuell vorhandenen UTF-8-Fehlern. Lange Kopfzeilen dürfen auf schmalen Bildschirmen umbrechen.
+- Offene Blöcke sind gestrichelt umrandet und hinterlegt; ihr Status **Noch zu decodieren** erscheint als kräftiger roter Text ohne buttonartigen Rahmen oder Hintergrund. Decodierte Blöcke haben einen kräftigen, durchgezogenen linken Akzent. Offene und fehlerhafte Blöcke erhalten keine **Weiter**-Control.
+- Ein einzelner Block nutzt die gesamte Breite im Informationsbereich, unabhängig von Modus, Codierung oder Decodierstatus. Dann entfällt die Fortschrittsanzeige; separate UTF-8-Fehlermeldungen bleiben sichtbar.
+- Bei mehreren Blöcken bleiben Anordnung und Fortschritt wie bisher: beispielsweise **1 / 2 Blöcke decodiert**, zusätzlich zu eventuell vorhandenen UTF-8-Fehlern. Lange Kopfzeilen dürfen auf schmalen Bildschirmen umbrechen.
 - Der Rücksetz-Hinweis nach geänderten Daten/Parametern verschwindet bei der ersten Klick-, Tastatur- oder Eingabeinteraktion im Informationsbereich oder Aufgabendialog.
 - Nach dem letzten decodierbaren Block ersetzt ein Abschluss mit **Schließen** die Weiter-Control im Overlay. Ungültige UTF-8-Folgen werden dabei ausdrücklich genannt, nicht als erfolgreich decodiert dargestellt.
 - Blöcke enthalten nur Bits, Ergebnis und Controls. Tabellenindizes, Kanalwerte und Erklärungen stehen ausschließlich im Overlay.
@@ -194,7 +195,7 @@ Jeder ungelöste Block zeigt **Noch zu decodieren** und zwei direkte Aktionen:
 - **Manuell** öffnet die Aufgabe für diesen Block im Overlay.
 - **Automatisch** decodiert ausschließlich diesen Block.
 
-Die Blöcke können in beliebiger Reihenfolge bearbeitet werden. Nach erfolgreicher Prüfung oder Automatisierung erscheinen Ergebnis und Fragezeichen; die beiden Lerncontrols entfallen für diesen Block. Ein knapper Zähler zeigt den Fortschritt.
+Die Blöcke können in beliebiger Reihenfolge bearbeitet werden. Nach erfolgreicher Prüfung oder Automatisierung erscheinen Ergebnis und Fragezeichen; die beiden Lerncontrols entfallen für diesen Block. Bei mehreren Blöcken zeigt ein knapper Zähler den Fortschritt.
 
 Solange weitere Blöcke offen sind, erscheint bei gelösten Blöcken **Weiter →** und in ihrer Erklärung **Nächster offener Block →**. Beide öffnen direkt die nächste manuelle Aufgabe. Die Suche folgt der sichtbaren Reihenfolge von links nach rechts, überspringt gelöste Blöcke und beginnt am Ende wieder links. Sobald alle gelöst sind, entfallen diese Controls. Der Sprung ist optional.
 
@@ -318,7 +319,7 @@ Die HTML-Datei lässt sich direkt ohne lokalen Webserver öffnen (`file://`). Da
 
 ## Implementierter Stand
 
-Die ersten zwölf Iterationen sind umgesetzt: automatischer und standardmäßig interaktiver Modus, direkte Blockdetails, blockweiser Lernmodus, die vereinbarten Parameter, UTF-8, gut unterscheidbare Modusfarbschemata sowie Stellenwertformeln und ein wiederverwendbarer Inline-Rechner für Zahlen, Farbkanäle und Zeichencodes. Die aktuelle Oberfläche ergänzt klarere Kanalregler, Blockzustände und einen ausdrücklichen Aufgabenabschluss sowie CMY und Ganzzahlen mit Vorzeichen. UTF-Oberflächenüberarbeitung, Fest-/Fließkommazahlen, eine gemeinsame Erweiterungsgruppierung, Übungsseite und Zeit-Challenges sind geplante spätere Schritte. UTF-16 ist optional; die Symboltabelle bleibt zurückgestellt.
+Die ersten dreizehn Iterationen sind umgesetzt: automatischer und standardmäßig interaktiver Modus, direkte Blockdetails, blockweiser Lernmodus, die vereinbarten Parameter, UTF-8, gut unterscheidbare Modusfarbschemata sowie Stellenwertformeln und ein wiederverwendbarer Inline-Rechner für Zahlen, Farbkanäle und Zeichencodes. Die aktuelle Oberfläche ergänzt klarere Kanalregler, Blockzustände und einen ausdrücklichen Aufgabenabschluss sowie CMY und Ganzzahlen mit Vorzeichen. Einzelblöcke nutzen die volle Informationsbreite ohne Fortschrittszähler; offene Aufgaben erhalten einen roten Textstatus. UTF-Oberflächenüberarbeitung, Fest-/Fließkommazahlen, eine gemeinsame Erweiterungsgruppierung, Übungsseite und Zeit-Challenges sind geplante spätere Schritte. UTF-16 ist optional; die Symboltabelle bleibt zurückgestellt.
 
 ### Start und Bedienung
 
@@ -378,6 +379,7 @@ Node ist ausschließlich für Entwicklungstests erforderlich, nicht zum Benutzen
 Geprüfter Stand:
 
 - 39 erfolgreiche Testgruppen, einschließlich sämtlicher Kombinationen aus Eingabelängen 0–64 und Blockgrößen 1–64.
+- Browser: Einzelblöcke füllen die Informationsbreite ohne Fortschrittszähler; Mehrfachblöcke behalten Layout und Fortschritt. Roter offener Status ohne Rahmen, Hintergrund oder Padding, Wechsel über Daten/Blockgröße, UTF-8-Codepoints und Fehler sowie beide Modi bei 360 Pixeln geprüft.
 - Vorzeichenbehaftete Ganzzahlen: Grenzwerte aller erlaubten Blockgrößen, sämtliche Bitmuster bis acht Bit, Null-Padding, negative Dez/Hex-Antworten und werttreue Entwürfe beim Basiswechsel.
 - CMY: alle Dreikanal-Farbtiefen, Primär-/Mischfarben, Weiß/Schwarz, unveränderte Graustufen und manuelle Kanalprüfung.
 - Browser: negative 64-Bit-Rechnerübernahme, gekoppelte Dez/Hex-Umrechnung, Aufgabenabschluss und automatische Ausgabe; CMY-Reglerfarben, Vorschau, Rechnergrenzen und Graustufen. Beide Erweiterungen auch bei 360 Pixeln ohne Seitenüberlauf geprüft.

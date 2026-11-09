@@ -85,6 +85,7 @@ button:hover:not(:disabled) { background: var(--accent-light); border-color: var
 .padding-note { color: #845119; font-size: .75rem; margin: 0 0 14px; }
 .blocks { display: flex; flex-wrap: wrap; align-items: stretch; gap: 12px; }
 .block { border: 2px solid var(--line); border-radius: 12px; padding: 14px; min-width: 75px; max-width: 100%; background: var(--block); display: flex; flex-direction: column; }
+.blocks > .block:only-child { width: 100%; }
 .block.active { border-color: var(--accent); background: var(--active); }
 .block.pending { border-style: dashed; background: var(--surface); }
 .block.pending .bits { color: var(--muted); }
@@ -106,7 +107,7 @@ button:hover:not(:disabled) { background: var(--accent-light); border-color: var
 #unicode-browser summary { cursor: pointer; color: var(--accent); font-size: .85rem; font-weight: 650; }
 .result { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 1.4rem; overflow-wrap: anywhere; }
 .unknown { color: var(--muted); font-size: .8rem; }
-.pending .unknown { display: inline-block; padding: 6px 9px; border: 1px dashed var(--line); border-radius: 6px; background: var(--field); color: var(--ink); font-weight: 650; }
+.pending .unknown { color: #8a212a; font-weight: 750; }
 .block-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; padding-top: 12px; margin-top: auto; }
 .block-actions button { font-size: .75rem; padding: 7px 9px; }
 .block-actions .detail-button { color: var(--accent); border-radius: 50%; font-size: .85rem; padding: 4px 10px; }

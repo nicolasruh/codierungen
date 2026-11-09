@@ -123,7 +123,7 @@
     $("decoding-error").hidden = !errors;
     $("decoding-error").textContent = `UTF-8: ${errors} ungültige Folge${errors === 1 ? "" : "n"}. Details über ?.`;
     $("visualization").hidden = !hasBlocks;
-    $("progress").hidden = !state.lesson;
+    $("progress").hidden = !state.lesson || state.result.blocks.length === 1;
     if (state.lesson) $("progress").textContent = state.lesson.total
       ? `${state.lesson.solved.size} / ${state.lesson.total} Blöcke decodiert${errors ? ` · ${errors} Fehler` : ""}`
       : `${errors} Fehler`;

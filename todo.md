@@ -191,6 +191,14 @@ Geprüft: alle vier Aufgabenarten, blockweise Automatisierung, zwölf Beispiele,
 - [x] 39 Logiktests einschließlich Grenzwerten, vollständigen kleinen Bitmustern und allen CMY-Farbtiefen durchführen.
 - [x] Browserprüfungen für CMY, negative Rechnerübernahme, beide Modi und mobile Darstellung abschließen.
 
+## Iteration 13: Einzelblock-Layout und offener Status
+
+- [x] „Noch zu decodieren“ als kräftigen roten Text ohne buttonartige Umrandung, Hintergrund oder Innenabstand darstellen.
+- [x] Einen einzelnen Block in beiden Modi über die gesamte Informationsbreite anzeigen.
+- [x] Fortschrittszähler bei einem einzelnen Block ausblenden; separate UTF-8-Fehlermeldungen beibehalten.
+- [x] Mehrfachblock-Layout und Fortschrittsanzeige unverändert erhalten, auch beim Wechsel der Daten oder Blockgröße.
+- [x] 39 Logiktests sowie Browserprüfungen für offene/gelöste Blöcke, UTF-8, Fehler und beide Modi bei 360 Pixeln durchführen.
+
 ## Zurückgestellt
 
 - [ ] ? Symboltabelle / „Pseudo-Wingdings“: Bedarf später klären; gegebenenfalls feste Unicode-Belegung statt vorausgesetzter Wingdings-Schrift.
